@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
     private float _turnDirection;
     private float setFireRate;
 
-    private void Awake()
+    private void Awake() // get Rigidbody2D component and get value for fire rate of shooting
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         setFireRate = fireRate;
@@ -22,7 +22,7 @@ public class Player : MonoBehaviour
 
     private void Update() // check for player input for player movement
     {
-        if (fireRate > 0.0f)
+        if (fireRate > 0.0f) // countdown for player fire rate
         {
             fireRate -= Time.deltaTime;
         }
@@ -45,7 +45,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0))
         {
-            if (fireRate < 0.0f)
+            if (fireRate < 0.0f) // limit player fire rate
             {
                 Shoot();
                 fireRate = setFireRate;
@@ -57,23 +57,23 @@ public class Player : MonoBehaviour
     {
         if (_thrusting)
         {
-            _rigidbody.AddForce(this.transform.up * this.thrustSpeed);
+            _rigidbody.AddForce(this.transform.up * this.thrustSpeed); // move forward
         }
 
         if (_reversing)
         {
-            _rigidbody.AddForce(this.transform.up * this.thrustSpeed * -1.0f);
+            _rigidbody.AddForce(this.transform.up * this.thrustSpeed * -1.0f); // move backward
         }
 
         if (_turnDirection != 0.0f)
         {
-            _rigidbody.AddTorque(_turnDirection * this.turnSpeed);
+            _rigidbody.AddTorque(_turnDirection * this.turnSpeed); // apply turning direction
         }
     }
 
     private void Shoot()
     {
-        Bullet bullet = Instantiate(this.bulletPrefab, this.transform.position, this.transform.rotation);
-        bullet.Project(this.transform.up);
+        Bullet bullet = Instantiate(this.bulletPrefab, this.transform.position, this.transform.rotation); // create new bullet prefab
+        bullet.Project(this.transform.up); // shoot bullet
     }
 }
