@@ -7,8 +7,10 @@ public class AsteroidSpawner : MonoBehaviour
     public float spawnRate = 2.5f;
     public float spawnDistance = 15.0f;
     public int spawnAmount = 1;
+    private float asteroidOriginalSpeed;
     private void Start()
     {
+        asteroidOriginalSpeed = asteroidPrefab.speed;
         InvokeRepeating(nameof(Spawn), this.spawnRate, this.spawnRate); // repeat spawn of asteroid according to the given rate
     }
 
@@ -26,5 +28,10 @@ public class AsteroidSpawner : MonoBehaviour
             asteroid.size = Random.Range(asteroid.minSize, asteroid.maxSize); // randomize asteroid size
             asteroid.SetTrajectory(rotation * -spawnDirection); // set the asteroid to head to the player's general direction
         }
+    }
+
+    public void SetSpeed(int level) // set speed of asteroid according to the level
+    {
+        asteroidPrefab.speed += asteroidOriginalSpeed + ((level - 1) * 5.0f);
     }
 }

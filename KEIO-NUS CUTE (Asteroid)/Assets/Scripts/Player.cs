@@ -5,7 +5,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     public GameManager _gameManager;
-    public float fireRate = 0.2f;
+    public float fireRate = 0.2f; // used in update to countdown before new bullet can be fired
     public Bullet bulletPrefab;
     public float thrustSpeed = 1.0f;
     public float turnSpeed = 1.0f;
@@ -14,12 +14,14 @@ public class Player : MonoBehaviour
     private bool _thrusting;
     private bool _reversing;
     private float _turnDirection;
-    private float setFireRate;
+    private float setFireRate; // current fire rate in game
+    private float originalFireRate; // store base fire rate for function setNewFireRate as the other two variables are used constantly in Update
 
     private void Awake() // get Rigidbody2D component and get value for fire rate of shooting
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         setFireRate = fireRate;
+        originalFireRate = fireRate;
     }
 
     private void OnEnable()
@@ -101,5 +103,10 @@ public class Player : MonoBehaviour
     private void TurnOnCollisions() // set player game object layer back to "Player"
     {
         this.gameObject.layer = LayerMask.NameToLayer("Player");
+    }
+
+    public void setNewFireRate(int level) // increase fire rate according to level
+    {
+        this.setFireRate = originalFireRate - ((level - 1) * 0.01f);
     }
 }
