@@ -4,10 +4,12 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    public GameManager _gameManager;
     public float fireRate = 0.2f;
     public Bullet bulletPrefab;
     public float thrustSpeed = 1.0f;
     public float turnSpeed = 1.0f;
+    public float invulnerabilityTimer = 3.0f;
     private Rigidbody2D _rigidbody;
     private bool _thrusting;
     private bool _reversing;
@@ -18,6 +20,12 @@ public class Player : MonoBehaviour
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         setFireRate = fireRate;
+    }
+
+    private void OnEnable()
+    {
+        this.gameObject.layer = LayerMask.NameToLayer("RespawnedPlayer"); // this layer prevents collisions for a set amount of time to prevent player from dying immediately on respawn
+        Invoke(nameof(TurnOnCollisions), invulnerabilityTimer); // switch back to original player layer after invulnerbility timer is up
     }
 
     private void Update() // check for player input for player movement
@@ -75,5 +83,23 @@ public class Player : MonoBehaviour
     {
         Bullet bullet = Instantiate(this.bulletPrefab, this.transform.position, this.transform.rotation); // create new bullet prefab
         bullet.Project(this.transform.up); // shoot bullet
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.tag == "Asteroid") // if collided to an asteroid
+        {
+            _rigidbody.velocity = Vector3.zero; // reset player velocity
+            _rigidbody.angularVelocity = 0.0f; // reset torques applied to player
+
+            this.gameObject.SetActive(false);
+
+            _gameManager.PlayerDied(); // respawn the player
+        }
+    }
+
+    private void TurnOnCollisions() // set player game object layer back to "Player"
+    {
+        this.gameObject.layer = LayerMask.NameToLayer("Player");
     }
 }

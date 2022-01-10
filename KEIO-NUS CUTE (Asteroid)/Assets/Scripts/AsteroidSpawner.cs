@@ -20,11 +20,11 @@ public class AsteroidSpawner : MonoBehaviour
             Vector3 spawnPoint = this.transform.position + spawnDirection; // random spawn area outside of above mentioned radius
 
             float variance = Random.Range(-this.trajectoryVariance, this.trajectoryVariance); // range of direction to generally point towards player after spawning
-            Quaternion rotation = Quaternion.AngleAxis(variance, Vector3.forward);
+            Quaternion rotation = Quaternion.AngleAxis(variance, Vector3.forward); 
 
-            Asteroid asteroid = Instantiate(this.asteroidPrefab, spawnPoint, rotation);
+            Asteroid asteroid = Instantiate(this.asteroidPrefab, spawnPoint, rotation); // spawn asteroid
             asteroid.size = Random.Range(asteroid.minSize, asteroid.maxSize); // randomize asteroid size
-            asteroid.SetTrajectory(rotation * -spawnDirection);
+            asteroid.SetTrajectory(rotation * -spawnDirection); // set the asteroid to head to the player's general direction
         }
     }
 }
