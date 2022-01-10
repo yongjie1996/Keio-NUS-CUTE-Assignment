@@ -13,14 +13,14 @@ public class Bullet : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody2D>();
     }
 
-    public void Project(Vector2 direction)
+    public void Project(Vector2 direction) // shoots a bullet forward
     {
         _rigidbody.AddForce(direction * this.speed);
 
         Destroy(this.gameObject, this.maxLifetime); // destroy this game object after set time so it doesn't linger in the game
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision) // destroy bullet after it collides with asteroid or boundary
     {
         Destroy(this.gameObject);
     }

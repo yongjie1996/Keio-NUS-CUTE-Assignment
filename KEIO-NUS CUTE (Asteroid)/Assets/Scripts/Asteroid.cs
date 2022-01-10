@@ -19,7 +19,7 @@ public class Asteroid : MonoBehaviour
     private void Start()
     {
         this.transform.eulerAngles = new Vector3(0.0f, 0.0f, Random.value * 360.0f); // random sprite rotation for spawned asteroid
-        this.transform.localScale = Vector3.one * this.size;
+        this.transform.localScale = Vector3.one * this.size; // random sprite scale
 
         _rigidbody.mass = this.size * 2.0f;
     }
@@ -33,7 +33,7 @@ public class Asteroid : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Bullet")
+        if (collision.gameObject.tag == "Bullet") // if collided with bullet
         {
             if ((this.size * 0.5) >= this.minSize ) // create 2 smaller asteroids if the asteroid is bigger than minSize if split
             {
@@ -41,8 +41,8 @@ public class Asteroid : MonoBehaviour
                 CreateSplit();
             }
 
-            FindObjectOfType<GameManager>().AsteroidDestroyed(this);
-            Destroy(this.gameObject);
+            FindObjectOfType<GameManager>().AsteroidDestroyed(this); // play particles and add score
+            Destroy(this.gameObject); // destroy asteroid
         }       
     }
 
