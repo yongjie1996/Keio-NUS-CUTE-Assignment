@@ -40,7 +40,7 @@ public class Asteroid : MonoBehaviour
             }
 
             FindObjectOfType<GameManager>().AsteroidDestroyed(this); // play particles and add score
-            Destroy(this.gameObject); // destroy asteroid
+            Destroy(this.gameObject); // destroy asteroid            
         }       
     }
 

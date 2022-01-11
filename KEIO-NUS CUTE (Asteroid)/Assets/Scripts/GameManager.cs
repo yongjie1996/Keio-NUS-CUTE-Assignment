@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     public TMP_Text levelText;
     public TMP_Text playerWinsText;
     public Button replayButton;
+    private AudioSource asteroidSound;
     private bool gamePaused = false;
 
     private void Awake()
@@ -27,6 +28,7 @@ public class GameManager : MonoBehaviour
         this.livesText.text = "Lives: " + lives.ToString();
         Invoke(nameof(SetObjectiveTextInactive), 2.0f); // show objective to win game for 2 seconds
         this.levelText.text = "Level " + level.ToString();
+        asteroidSound = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -48,6 +50,8 @@ public class GameManager : MonoBehaviour
     {
         this.explosion.transform.position = asteroid.transform.position;
         this.explosion.Play();
+
+        asteroidSound.Play();
 
         if (asteroid.size < 0.75f)
         {
@@ -101,7 +105,7 @@ public class GameManager : MonoBehaviour
         this.player.gameObject.SetActive(true);
     }
 
-    private void DestroyAllAsteroids()
+    private void DestroyAllAsteroids() // destroy every asteroid game object in the game
     {
         GameObject[] asteroids;
 
@@ -115,7 +119,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void GameOver()
+    private void GameOver()// shows text that player lost the game and show button to play the game again
     {
         this.asteroidSpawner.gameObject.SetActive(false);
 
@@ -125,12 +129,12 @@ public class GameManager : MonoBehaviour
         this.replayButton.gameObject.SetActive(true);
     }
 
-    private void SetObjectiveTextInactive()
+    private void SetObjectiveTextInactive() // set text that shows game objective inactive
     {
         this.winObjectiveText.gameObject.SetActive(false);
     }
 
-    private void WinGame ()
+    private void WinGame ()  // shows text that player won the game and show button to play the game again
     {
         this.asteroidSpawner.gameObject.SetActive(false);
 
@@ -141,7 +145,7 @@ public class GameManager : MonoBehaviour
         this.replayButton.gameObject.SetActive(true);
     }
 
-    public void ReplayButtonOnPress()
+    public void ReplayButtonOnPress() // restarts the game for the player
     {
         this.asteroidSpawner.gameObject.SetActive(true);
         this.gameOverText.gameObject.SetActive(false);
@@ -156,15 +160,18 @@ public class GameManager : MonoBehaviour
         this.livesText.text = "Lives: " + lives.ToString();
         this.levelText.text = "Level " + level.ToString();
 
+        this.asteroidSpawner.SetSpeed(this.level);
+        this.player.setNewFireRate(this.level);
+
         Respawn();
     }
 
-    public void SaveData()
+    public void SaveData() // save relevant data into a binary file
     {
         SaveSystem.SaveProgress(this);
     }
 
-    public void LoadData()
+    public void LoadData() // load last saved data from binary file into game
     {
         DestroyAllAsteroids();
 
@@ -178,6 +185,9 @@ public class GameManager : MonoBehaviour
         this.livesText.text = "Lives: " + lives.ToString();
         this.levelText.text = "Level " + level.ToString();
 
+        this.asteroidSpawner.SetSpeed(this.level);
+        this.player.setNewFireRate(this.level);
+
         Vector3 playerPosition;
         playerPosition.x = data.playerPosition[0];
         playerPosition.y = data.playerPosition[1];
@@ -185,7 +195,7 @@ public class GameManager : MonoBehaviour
         this.player.transform.position = playerPosition;
     }
 
-    public void ResumeGame()
+    public void ResumeGame() // resumes game by having game time flow normally
     {
         pauseMenuUI.gameObject.SetActive(false);
         Time.timeScale = 1f;
@@ -193,11 +203,16 @@ public class GameManager : MonoBehaviour
         player.GetComponent<Player>().enabled = true;
     }
 
-    public void PauseGame()
+    public void PauseGame() // stops game time in order to pause
     {
         pauseMenuUI.gameObject.SetActive(true);
         Time.timeScale = 0f;
         gamePaused = true;
         player.GetComponent<Player>().enabled = false;
+    }
+
+    public void QuitGame() // kill application
+    {
+        Application.Quit();
     }
 }

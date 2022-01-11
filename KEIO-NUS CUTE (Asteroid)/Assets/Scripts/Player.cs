@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     public float thrustSpeed = 1.0f;
     public float turnSpeed = 1.0f;
     public float invulnerabilityTimer = 3.0f;
+    private Animator animator;
     private Rigidbody2D _rigidbody;
     private bool _thrusting;
     private bool _reversing;
@@ -19,6 +20,7 @@ public class Player : MonoBehaviour
 
     private void Awake() // get Rigidbody2D component and get value for fire rate of shooting
     {
+        animator = GetComponent<Animator>();
         _rigidbody = GetComponent<Rigidbody2D>();
         setFireRate = fireRate;
         originalFireRate = fireRate;
@@ -26,8 +28,10 @@ public class Player : MonoBehaviour
 
     private void OnEnable()
     {
+        animator.enabled = true;
         this.gameObject.layer = LayerMask.NameToLayer("RespawnedPlayer"); // this layer prevents collisions for a set amount of time to prevent player from dying immediately on respawn
         Invoke(nameof(TurnOnCollisions), invulnerabilityTimer); // switch back to original player layer after invulnerbility timer is up
+        Invoke(nameof(DisableBlink), invulnerabilityTimer);
     }
 
     private void Update() // check for player input for player movement
@@ -103,6 +107,11 @@ public class Player : MonoBehaviour
     private void TurnOnCollisions() // set player game object layer back to "Player"
     {
         this.gameObject.layer = LayerMask.NameToLayer("Player");
+    }
+
+    private void DisableBlink()
+    {
+        animator.enabled = false;
     }
 
     public void setNewFireRate(int level) // increase fire rate according to level
