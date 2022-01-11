@@ -32,6 +32,6 @@ public class AsteroidSpawner : MonoBehaviour
 
     public void SetSpeed(int level) // set speed of asteroid according to the level
     {
-        asteroidPrefab.speed += asteroidOriginalSpeed + ((level - 1) * 5.0f);
+        asteroidPrefab.speed = asteroidOriginalSpeed + ((level - 1) * 5.0f);
     }
 }

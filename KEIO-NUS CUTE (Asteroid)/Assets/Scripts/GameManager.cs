@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class GameManager : MonoBehaviour
@@ -16,13 +17,13 @@ public class GameManager : MonoBehaviour
     public TMP_Text gameOverText;
     public TMP_Text levelText;
     public TMP_Text playerWinsText;
+    public Button ReplayButton;
 
     private void Awake()
     {
         this.scoreText.text = "Score: " + score.ToString();
         this.livesText.text = "Lives: " + lives.ToString();
         Invoke(nameof(SetObjectiveTextInactive), 2.0f); // show objective to win game for 2 seconds
-        Invoke(nameof(SetLevelTextActive), 2.0f); // show level after objective is set inactive
         this.levelText.text = "Level " + level.ToString();
     }
 
@@ -83,9 +84,28 @@ public class GameManager : MonoBehaviour
         this.player.gameObject.SetActive(true);
     }
 
+    private void DestroyAllAsteroids()
+    {
+        GameObject[] asteroids;
+
+        asteroids = GameObject.FindGameObjectsWithTag("Asteroid");
+
+        foreach (GameObject asteroid in asteroids)
+        {
+            this.explosion.transform.position = asteroid.transform.position;
+            this.explosion.Play();
+            Destroy(asteroid);
+        }
+    }
+
     private void GameOver()
     {
+        this.asteroidSpawner.gameObject.SetActive(false);
+
+        DestroyAllAsteroids();
+
         this.gameOverText.gameObject.SetActive(true);
+        this.ReplayButton.gameObject.SetActive(true);
     }
 
     private void SetObjectiveTextInactive()
@@ -93,26 +113,32 @@ public class GameManager : MonoBehaviour
         this.winObjectiveText.gameObject.SetActive(false);
     }
 
-    private void SetLevelTextActive()
-    {
-        this.levelText.gameObject.SetActive(true);
-    }
-
     private void WinGame ()
     {
         this.asteroidSpawner.gameObject.SetActive(false);
 
-        GameObject[] asteroids;
+        DestroyAllAsteroids();
 
-        asteroids = GameObject.FindGameObjectsWithTag("Asteroid");
-
-        foreach(GameObject asteroid in asteroids)
-        {
-            this.explosion.transform.position = asteroid.transform.position;
-            this.explosion.Play();
-            Destroy(asteroid);
-        }
-
+        this.player.gameObject.SetActive(false);
         this.playerWinsText.gameObject.SetActive(true);
+        this.ReplayButton.gameObject.SetActive(true);
+    }
+
+    public void ReplayButtonOnPress()
+    {
+        this.asteroidSpawner.gameObject.SetActive(true);
+        this.gameOverText.gameObject.SetActive(false);
+        this.playerWinsText.gameObject.SetActive(false);
+        this.ReplayButton.gameObject.SetActive(false);
+
+        this.lives = 3;
+        this.score = 0;
+        this.level = 1;
+
+        this.scoreText.text = "Score: " + score.ToString();
+        this.livesText.text = "Lives: " + lives.ToString();
+        this.levelText.text = "Level " + level.ToString();
+
+        Respawn();
     }
 }
