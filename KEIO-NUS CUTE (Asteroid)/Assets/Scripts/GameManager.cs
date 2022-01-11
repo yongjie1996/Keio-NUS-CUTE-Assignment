@@ -11,13 +11,15 @@ public class GameManager : MonoBehaviour
     public int lives = 3;
     public int score = 0;
     public int level = 1;
+    public Canvas pauseMenuUI;
     public TMP_Text winObjectiveText;
     public TMP_Text scoreText;
     public TMP_Text livesText;
     public TMP_Text gameOverText;
     public TMP_Text levelText;
     public TMP_Text playerWinsText;
-    public Button ReplayButton;
+    public Button replayButton;
+    private bool gamePaused = false;
 
     private void Awake()
     {
@@ -25,6 +27,21 @@ public class GameManager : MonoBehaviour
         this.livesText.text = "Lives: " + lives.ToString();
         Invoke(nameof(SetObjectiveTextInactive), 2.0f); // show objective to win game for 2 seconds
         this.levelText.text = "Level " + level.ToString();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (gamePaused)
+            {
+                ResumeGame();
+            }
+            else
+            {
+                PauseGame();
+            }
+        }
     }
 
     public void AsteroidDestroyed(Asteroid asteroid)
@@ -105,7 +122,7 @@ public class GameManager : MonoBehaviour
         DestroyAllAsteroids();
 
         this.gameOverText.gameObject.SetActive(true);
-        this.ReplayButton.gameObject.SetActive(true);
+        this.replayButton.gameObject.SetActive(true);
     }
 
     private void SetObjectiveTextInactive()
@@ -121,7 +138,7 @@ public class GameManager : MonoBehaviour
 
         this.player.gameObject.SetActive(false);
         this.playerWinsText.gameObject.SetActive(true);
-        this.ReplayButton.gameObject.SetActive(true);
+        this.replayButton.gameObject.SetActive(true);
     }
 
     public void ReplayButtonOnPress()
@@ -129,7 +146,7 @@ public class GameManager : MonoBehaviour
         this.asteroidSpawner.gameObject.SetActive(true);
         this.gameOverText.gameObject.SetActive(false);
         this.playerWinsText.gameObject.SetActive(false);
-        this.ReplayButton.gameObject.SetActive(false);
+        this.replayButton.gameObject.SetActive(false);
 
         this.lives = 3;
         this.score = 0;
@@ -140,5 +157,47 @@ public class GameManager : MonoBehaviour
         this.levelText.text = "Level " + level.ToString();
 
         Respawn();
+    }
+
+    public void SaveData()
+    {
+        SaveSystem.SaveProgress(this);
+    }
+
+    public void LoadData()
+    {
+        DestroyAllAsteroids();
+
+        SaveData data = SaveSystem.LoadData();
+
+        this.level = data.level;
+        this.lives = data.lives;
+        this.score = data.score;
+
+        this.scoreText.text = "Score: " + score.ToString();
+        this.livesText.text = "Lives: " + lives.ToString();
+        this.levelText.text = "Level " + level.ToString();
+
+        Vector3 playerPosition;
+        playerPosition.x = data.playerPosition[0];
+        playerPosition.y = data.playerPosition[1];
+        playerPosition.z = data.playerPosition[2];
+        this.player.transform.position = playerPosition;
+    }
+
+    public void ResumeGame()
+    {
+        pauseMenuUI.gameObject.SetActive(false);
+        Time.timeScale = 1f;
+        gamePaused = false;
+        player.GetComponent<Player>().enabled = true;
+    }
+
+    public void PauseGame()
+    {
+        pauseMenuUI.gameObject.SetActive(true);
+        Time.timeScale = 0f;
+        gamePaused = true;
+        player.GetComponent<Player>().enabled = false;
     }
 }
