@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
     {
         this.scoreText.text = "Score: " + score.ToString();
         this.livesText.text = "Lives: " + lives.ToString();
-        Invoke(nameof(SetObjectiveTextInactive), 2.0f); // show objective to win game for 2 seconds
+        Invoke(nameof(SetObjectiveTextInactive), 2.0f);
         this.levelText.text = "Level " + level.ToString();
         asteroidSound = GetComponent<AudioSource>();
     }
@@ -66,13 +66,13 @@ public class GameManager : MonoBehaviour
             this.score += 25;
         }
 
-        this.scoreText.text = "Score: " + score.ToString(); // update score text
+        this.scoreText.text = "Score: " + score.ToString();
         this.level = score / 1000 + 1;
 
         asteroidSpawner.SetSpeed(level);
         player.setNewFireRate(level);
 
-        if (this.level >= 10) {
+        if (this.level >= 11) {
             WinGame();
         }
         else
@@ -87,25 +87,25 @@ public class GameManager : MonoBehaviour
         this.explosion.Play();
         this.lives--;
 
-        livesText.text = "Lives: " + lives.ToString(); // update lives text
+        livesText.text = "Lives: " + lives.ToString();
 
-        if (this.lives <= 0) // end game if player lives is equal or less than zero
+        if (this.lives <= 0)
         {
             GameOver();
         } 
-        else // otherwise respawn the player after dying, invoking respawn according to the respawn timer
+        else
         {
             Invoke(nameof(Respawn), this.respawnTime);
         }
     }
 
-    private void Respawn() // set the player object back to active
+    private void Respawn()
     {
         this.player.transform.position = Vector3.zero;
         this.player.gameObject.SetActive(true);
     }
 
-    private void DestroyAllAsteroids() // destroy every asteroid game object in the game
+    private void DestroyAllAsteroids()
     {
         GameObject[] asteroids;
 
@@ -119,7 +119,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void GameOver()// shows text that player lost the game and show button to play the game again
+    private void DestroyAllBullets()
+    {
+        GameObject[] bullets;
+
+        bullets = GameObject.FindGameObjectsWithTag("Bullet");
+
+        foreach (GameObject bullet in bullets)
+        {
+            Destroy(bullet);
+        }   
+    }
+
+    private void GameOver() // shows text that player lost the game and show button to play the game again
     {
         this.asteroidSpawner.gameObject.SetActive(false);
 
@@ -129,7 +141,7 @@ public class GameManager : MonoBehaviour
         this.replayButton.gameObject.SetActive(true);
     }
 
-    private void SetObjectiveTextInactive() // set text that shows game objective inactive
+    private void SetObjectiveTextInactive()
     {
         this.winObjectiveText.gameObject.SetActive(false);
     }
@@ -145,7 +157,7 @@ public class GameManager : MonoBehaviour
         this.replayButton.gameObject.SetActive(true);
     }
 
-    public void ReplayButtonOnPress() // restarts the game for the player
+    public void ReplayButtonOnPress()
     {
         this.asteroidSpawner.gameObject.SetActive(true);
         this.gameOverText.gameObject.SetActive(false);
@@ -166,14 +178,15 @@ public class GameManager : MonoBehaviour
         Respawn();
     }
 
-    public void SaveData() // save relevant data into a binary file
+    public void SaveData()
     {
         SaveSystem.SaveProgress(this);
     }
 
-    public void LoadData() // load last saved data from binary file into game
+    public void LoadData()
     {
         DestroyAllAsteroids();
+        DestroyAllBullets();
 
         SaveData data = SaveSystem.LoadData();
 
@@ -195,7 +208,7 @@ public class GameManager : MonoBehaviour
         this.player.transform.position = playerPosition;
     }
 
-    public void ResumeGame() // resumes game by having game time flow normally
+    public void ResumeGame()
     {
         pauseMenuUI.gameObject.SetActive(false);
         Time.timeScale = 1f;
@@ -203,7 +216,7 @@ public class GameManager : MonoBehaviour
         player.GetComponent<Player>().enabled = true;
     }
 
-    public void PauseGame() // stops game time in order to pause
+    public void PauseGame()
     {
         pauseMenuUI.gameObject.SetActive(true);
         Time.timeScale = 0f;
@@ -211,7 +224,7 @@ public class GameManager : MonoBehaviour
         player.GetComponent<Player>().enabled = false;
     }
 
-    public void QuitGame() // kill application
+    public void QuitGame()
     {
         Application.Quit();
     }

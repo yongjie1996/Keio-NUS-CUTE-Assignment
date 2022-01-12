@@ -1000,7 +1000,6 @@ GameObject:
   - component: {fileID: 921459726}
   - component: {fileID: 921459730}
   - component: {fileID: 921459731}
-  - component: {fileID: 921459732}
   - component: {fileID: 921459733}
   m_Layer: 6
   m_Name: Player
@@ -1237,20 +1236,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &921459732
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 921459725}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c29cff538c195c249b69c6f2236de67b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Library: []
-  m_SpriteLibraryAsset: {fileID: 0}
 --- !u!95 &921459733
 Animator:
   serializedVersion: 4
